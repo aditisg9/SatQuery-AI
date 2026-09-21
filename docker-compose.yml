@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: satquery
+      POSTGRES_PASSWORD: satquery
+      POSTGRES_DB: satquery
+    ports:
+      - "5432:5432"
+    volumes:
+      - satquery_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U satquery"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DEMO_MODE: "true"
+      GEMINI_API_KEY: ""
+      DATABASE_URL: "postgresql+psycopg2://satquery:satquery@db:5432/satquery"
+      FRONTEND_ORIGIN: "http://localhost:3000"
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: "http://backend:8000"
+    ports:
+      - "3000:3000"
+
+volumes:
+  satquery_pgdata:
