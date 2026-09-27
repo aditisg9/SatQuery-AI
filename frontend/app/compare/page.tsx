@@ -13,7 +13,7 @@ import { formatAreaDual } from "@/lib/format";
 import type { AnalysisResult, HistoryEntry, ImageOut, SessionOut } from "@/lib/types";
 
 const COMPARE_SUGGESTIONS = [
-  "What changed between these two satellite images?",
+  "What warningd between these two satellite images?",
   "Has urbanization increased?",
   "Are there new roads or buildings?",
   "Show areas where vegetation decreased.",
@@ -32,7 +32,7 @@ function CompareInner() {
   const [latest, setLatest] = useState<AnalysisResult | null>(null);
   const [latestQuestion, setLatestQuestion] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState<"before" | "after" | "change">("change");
+  const [tab, setTab] = useState<"before" | "after" | "warning">("warning");
 
   useEffect(() => {
     if (!sessionId) return;
@@ -74,7 +74,7 @@ function CompareInner() {
       const result = await api.analyze(sessionId, question);
       setLatest(result);
       setLatestQuestion(question);
-      setTab("change");
+      setTab("warning");
       setHistory((h) => {
         const copy = [...h];
         copy[copy.length - 1] = {
@@ -138,21 +138,21 @@ function CompareInner() {
       : latest?.change_map_url && assetUrl(latest.change_map_url);
 
   return (
-    <Shell title="Compare" subtitle={session?.title || "Change detection"}>
+    <Shell title="Compare" subtitle={session?.title || "change detection"}>
       <div className="flex flex-col lg:grid lg:grid-cols-[1fr_360px] lg:h-full min-h-0">
         <div className="overflow-y-auto p-4 md:p-6 space-y-5 min-w-0">
           <div className="flex gap-2">
-            {(["before", "after", "change"] as const).map((t) => (
+            {(["before", "after", "warning"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 className={`px-3 py-1.5 rounded-md text-xs font-mono-ui uppercase tracking-wide border active:scale-95 transition-all ${
                   tab === t
-                    ? "border-signal/40 text-signal bg-signal/10"
+                    ? "border-primary/40 text-primary bg-primary/10"
                     : "border-panel-border text-ink-muted hover:text-ink hover:bg-panel-raised"
                 }`}
               >
-                {t === "change" ? "Change Map" : t}
+                {t === "warning" ? "Change Map" : t}
               </button>
             ))}
           </div>
@@ -171,7 +171,7 @@ function CompareInner() {
           {latest && latest.change_stats.length > 0 && (
             <div className="grid md:grid-cols-2 gap-4">
               <ChangeStatsChart stats={latest.change_stats} />
-              <div className="rounded-lg border border-panel-border bg-panel/50 p-4 transition-all duration-200 hover:border-signal/40 hover:shadow-glow">
+              <div className="rounded-lg border border-panel-border bg-panel p-4 transition-all duration-200 hover:border-primary/40 hover:shadow-sm">
                 <div className="font-mono-ui text-xs tracking-wider text-ink-muted uppercase mb-3">
                   Change Summary
                 </div>
@@ -182,7 +182,7 @@ function CompareInner() {
                       <li key={c.label} className="flex items-center justify-between gap-3">
                         <span className="text-ink-muted shrink-0">{c.label}</span>
                         <span className="flex items-center gap-2 text-right">
-                          <span className={c.delta_percentage > 0 ? "text-change" : "text-signal"}>
+                          <span className={c.delta_percentage > 0 ? "text-warning" : "text-primary"}>
                             {c.delta_percentage > 0 ? "+" : ""}
                             {c.delta_percentage}%
                           </span>
@@ -197,7 +197,7 @@ function CompareInner() {
                     ))}
                 </ul>
                 {latest.notes.length > 0 && (
-                  <p className="text-[11px] text-change mt-3 pt-3 border-t border-panel-border/70">
+                  <p className="text-[11px] text-warning mt-3 pt-3 border-t border-panel-border/70">
                     {latest.notes[0]}
                   </p>
                 )}

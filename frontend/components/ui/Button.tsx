@@ -8,13 +8,13 @@ type Size = "sm" | "md" | "lg";
 
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
-    "bg-signal text-void font-semibold hover:bg-signal/90 shadow-glow disabled:shadow-none",
+    "bg-primary text-white font-semibold hover:bg-primary-hover shadow-sm disabled:shadow-none",
   secondary:
-    "border border-panel-border text-ink bg-panel-raised/60 hover:border-signal/40 hover:text-signal",
+    "border border-panel-border text-ink bg-panel-raised hover:border-primary/40 hover:text-primary",
   ghost:
     "border border-transparent text-ink-muted hover:text-ink hover:bg-panel-raised",
   danger:
-    "border border-alert/30 text-alert hover:bg-alert/10",
+    "border border-error/30 text-error hover:bg-error/10",
 };
 
 const SIZE_CLASSES: Record<Size, string> = {

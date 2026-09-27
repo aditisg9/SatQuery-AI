@@ -1,43 +1,134 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ShieldCheck, MapPin, Upload, Globe2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
+import { ShieldCheck, MapPin, Upload, Globe2, Users, Loader2 } from "lucide-react";
 import Shell from "@/components/Shell";
 import { api, assetUrl } from "@/lib/api";
 import type { AdminImageRow, AdminStats } from "@/lib/types";
 
 export default function AdminPage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  
   const [rows, setRows] = useState<AdminImageRow[]>([]);
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([api.adminImages(), api.adminStats()])
-      .then(([r, s]) => {
+    if (!authLoading) {
+      if (!user) {
+        router.push("/login");
+      } else if (user.role !== "ADMIN") {
+        router.push("/dashboard");
+      } else {
+        loadData();
+      }
+    }
+  }, [user, authLoading, router]);
+
+  const loadData = () => {
+    setLoading(true);
+    Promise.all([api.adminImages(), api.adminStats(), api.adminUsers()])
+      .then(([r, s, u]) => {
         setRows(r);
         setStats(s);
+        setUsers(u);
       })
       .finally(() => setLoading(false));
-  }, []);
+  };
+  
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    if (!confirm(`Change role to ${newRole}?`)) return;
+    try {
+      await api.updateUserRole(userId, newRole);
+      loadData();
+    } catch (e: any) {
+      alert(e.message || "Failed to update role");
+    }
+  };
+
+  if (authLoading || (user && user.role !== "ADMIN")) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F3EE]">
+        <Loader2 className="w-8 h-8 text-[#315FA8] animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   return (
     <Shell title="Admin" subtitle="Every image in the system — uploaded or auto-fetched">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-10 space-y-6">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-signal" />
+          <ShieldCheck className="w-4 h-4 text-primary" />
           <h2 className="font-display text-xl font-semibold text-ink">Data Oversight</h2>
         </div>
 
         {stats && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <StatTile icon={Users} label="Total Users" value={users.length} />
             <StatTile icon={Globe2} label="Total Images" value={stats.total_images} />
-            <StatTile icon={Upload} label="Manually Uploaded" value={stats.uploaded_count} />
-            <StatTile icon={MapPin} label="Auto-Fetched" value={stats.fetched_count} accent="change" />
+            <StatTile icon={Upload} label="Uploaded" value={stats.uploaded_count} />
+            <StatTile icon={MapPin} label="Auto-Fetched" value={stats.fetched_count} accent="warning" />
             <StatTile icon={ShieldCheck} label="Georeferenced" value={stats.georeferenced_count} />
           </div>
         )}
+        
+        {/* Users Table */}
+        <div className="rounded-xl border border-panel-border bg-panel shadow-panel overflow-hidden">
+          <div className="px-5 py-4 border-b border-panel-border bg-panel-header">
+            <h2 className="font-semibold text-ink">User Management</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-panel-border text-ink-muted">
+                  <th className="px-5 py-3 font-semibold">Name</th>
+                  <th className="px-5 py-3 font-semibold">Email</th>
+                  <th className="px-5 py-3 font-semibold">Status</th>
+                  <th className="px-5 py-3 font-semibold">Role</th>
+                  <th className="px-5 py-3 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <tr key={u.id} className="border-b border-panel-border last:border-0 hover:bg-black/5">
+                    <td className="px-5 py-3 font-medium text-ink">{u.name}</td>
+                    <td className="px-5 py-3 text-ink-muted">{u.email}</td>
+                    <td className="px-5 py-3">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${u.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {u.is_active ? 'Active' : 'Disabled'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${u.role === 'ADMIN' ? 'bg-[#315FA8]/10 text-[#315FA8]' : 'bg-gray-100 text-gray-800'}`}>
+                        {u.role}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-right">
+                      {u.id !== user.id && (
+                        <select
+                          value={u.role}
+                          onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                          className="text-xs border border-panel-border rounded px-2 py-1 bg-white"
+                        >
+                          <option value="USER">Make USER</option>
+                          <option value="ADMIN">Make ADMIN</option>
+                        </select>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-        <div className="rounded-xl border border-panel-border bg-panel/50 shadow-panel overflow-hidden">
+        <div className="rounded-xl border border-panel-border bg-panel shadow-panel overflow-hidden">
           <div className="px-5 py-3 border-b border-panel-border">
             <span className="font-mono-ui text-xs tracking-[0.15em] text-ink-muted uppercase">
               Image Log
@@ -67,7 +158,7 @@ export default function AdminPage() {
                   {rows.map((r) => (
                     <tr
                       key={r.id}
-                      className="border-b border-panel-border/60 last:border-0 hover:bg-panel-raised/40 transition-colors"
+                      className="border-b border-panel-border/60 last:border-0 hover:bg-panel-raised transition-colors"
                     >
                       <td className="px-5 py-2.5">
                         {r.thumbnail_url ? (
@@ -87,8 +178,8 @@ export default function AdminPage() {
                         <span
                           className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-mono-ui uppercase tracking-wide border ${
                             r.source === "fetched"
-                              ? "border-change/40 text-change bg-change/10"
-                              : "border-signal/40 text-signal bg-signal/10"
+                              ? "border-warning/40 text-warning bg-warning/10"
+                              : "border-primary/40 text-primary bg-primary/10"
                           }`}
                         >
                           {r.source === "fetched" ? (
@@ -104,7 +195,7 @@ export default function AdminPage() {
                       </td>
                       <td className="px-5 py-2.5">
                         {r.has_geo_metadata ? (
-                          <span className="text-signal text-xs">Yes</span>
+                          <span className="text-primary text-xs">Yes</span>
                         ) : (
                           <span className="text-ink-muted text-xs">No</span>
                         )}
@@ -133,16 +224,16 @@ function StatTile({
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: number;
-  accent?: "signal" | "change";
+  accent?: "signal" | "warning";
 }) {
   return (
-    <div className="rounded-lg border border-panel-border bg-panel/50 p-4 flex items-center gap-3 transition-all duration-200 hover:border-signal/50 hover:bg-panel-raised hover:shadow-glow hover:-translate-y-0.5 cursor-default group">
+    <div className="rounded-lg border border-panel-border bg-panel p-4 flex items-center gap-3 transition-all duration-200 hover:border-primary/50 hover:bg-panel-raised hover:shadow-sm hover:-translate-y-0.5 cursor-default group">
       <div
         className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-          accent === "change" ? "bg-change/10 border border-change/30" : "bg-signal/10 border border-signal/30"
+          accent === "warning" ? "bg-warning/10 border border-warning/30" : "bg-primary/10 border border-primary/30"
         }`}
       >
-        <Icon className={`w-4.5 h-4.5 ${accent === "change" ? "text-change" : "text-signal"}`} />
+        <Icon className={`w-4.5 h-4.5 ${accent === "warning" ? "text-warning" : "text-primary"}`} />
       </div>
       <div className="min-w-0">
         <div className="text-lg font-display font-semibold text-ink">{value}</div>

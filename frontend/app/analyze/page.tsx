@@ -97,7 +97,7 @@ function AnalyzeInner() {
                 onClick={() => setSourceTab(t)}
                 className={`px-3 py-1.5 rounded-md text-xs font-mono-ui uppercase tracking-wide border active:scale-95 transition-all ${
                   sourceTab === t
-                    ? "border-signal/40 text-signal bg-signal/10"
+                    ? "border-primary/40 text-primary bg-primary/10"
                     : "border-panel-border text-ink-muted hover:text-ink hover:bg-panel-raised"
                 }`}
               >
@@ -125,8 +125,8 @@ function AnalyzeInner() {
                 <span
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border uppercase tracking-wide ${
                     image.source === "fetched"
-                      ? "border-change/40 text-change bg-change/10"
-                      : "border-signal/40 text-signal bg-signal/10"
+                      ? "border-warning/40 text-warning bg-warning/10"
+                      : "border-primary/40 text-primary bg-primary/10"
                   }`}
                 >
                   {image.source === "fetched" ? "Live fetch" : "Uploaded file"}

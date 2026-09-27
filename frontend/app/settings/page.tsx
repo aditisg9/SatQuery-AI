@@ -16,9 +16,9 @@ export default function SettingsPage() {
   return (
     <Shell title="Settings" subtitle="System configuration">
       <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 md:py-10 space-y-6">
-        <div className="rounded-xl border border-panel-border bg-panel/50 p-6 shadow-panel transition-all duration-200 hover:border-signal/40 hover:shadow-glow">
+        <div className="rounded-xl border border-panel-border bg-panel p-6 shadow-panel transition-all duration-200 hover:border-primary/40 hover:shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <SettingsIcon className="w-4 h-4 text-signal" />
+            <SettingsIcon className="w-4 h-4 text-primary" />
             <h3 className="font-display text-sm font-semibold tracking-wide text-ink">Analysis Engine</h3>
           </div>
 
@@ -30,7 +30,7 @@ export default function SettingsPage() {
                 value={
                   <span
                     className={`inline-flex items-center gap-1.5 font-mono-ui text-xs ${
-                      status.vlm_backend === "gemini" ? "text-signal" : "text-change"
+                      status.vlm_backend === "gemini" ? "text-primary" : "text-warning"
                     }`}
                   >
                     {status.vlm_backend === "gemini" ? (
@@ -50,7 +50,7 @@ export default function SettingsPage() {
           )}
         </div>
 
-        <div className="rounded-xl border border-panel-border bg-panel/50 p-6 text-sm text-ink-muted space-y-3 shadow-panel transition-all duration-200 hover:border-signal/40 hover:shadow-glow">
+        <div className="rounded-xl border border-panel-border bg-panel p-6 text-sm text-ink-muted space-y-3 shadow-panel transition-all duration-200 hover:border-primary/40 hover:shadow-sm">
           <h4 className="font-mono-ui text-xs tracking-wider text-ink uppercase">Enable Gemini</h4>
           <p>To use real Gemini reasoning instead of the local rule-based engine:</p>
           <ol className="list-decimal list-inside space-y-1">
@@ -60,7 +60,7 @@ export default function SettingsPage() {
                 href="https://aistudio.google.com/apikey"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-signal hover:text-signal/80 hover:underline underline-offset-2 active:scale-95 inline-block transition-all"
+                className="text-primary hover:text-primary/80 hover:underline underline-offset-2 active:scale-95 inline-block transition-all"
               >
                 aistudio.google.com/apikey
               </a>
@@ -73,7 +73,7 @@ export default function SettingsPage() {
             <li>Restart the backend service.</li>
           </ol>
           <p className="text-xs">
-            Computer-vision statistics (segmentation, detection, change maps) always run locally —
+            Computer-vision statistics (segmentation, detection, warning maps) always run locally —
             Gemini is only used to phrase the natural-language answer, grounded in those numbers.
           </p>
         </div>

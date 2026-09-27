@@ -23,20 +23,20 @@ from PIL import Image
 
 # Canonical land-cover classes used across the app.
 CLASS_DEFS = [
-    {"key": "water", "label": "Water", "color": "#3B82F6"},
-    {"key": "vegetation", "label": "Vegetation", "color": "#22C55E"},
-    {"key": "urban", "label": "Urban / Built-up", "color": "#F2A65A"},
-    {"key": "bare_soil", "label": "Bare Soil / Agriculture", "color": "#C9A66B"},
-    {"key": "other", "label": "Unclassified", "color": "#5B6B85"},
+    {"key": "water", "label": "Water", "color": "#4F7F86"},
+    {"key": "vegetation", "label": "Vegetation", "color": "#5E8C61"},
+    {"key": "urban", "label": "Urban / Built-up", "color": "#B85C5C"},
+    {"key": "bare_soil", "label": "Bare Soil / Agriculture", "color": "#B58B52"},
+    {"key": "other", "label": "Unclassified", "color": "#64748B"},
 ]
 CLASS_KEYS = [c["key"] for c in CLASS_DEFS]
 CLASS_COLOR_ARRAY = np.array(
     [
-        [59, 130, 246],   # water
-        [34, 197, 94],    # vegetation
-        [242, 166, 90],   # urban
-        [201, 166, 107],  # bare soil
-        [91, 107, 133],   # other
+        [79, 127, 134],   # water
+        [94, 140, 97],    # vegetation
+        [184, 92, 92],    # urban
+        [181, 139, 82],   # bare soil
+        [100, 116, 139],  # other
     ],
     dtype=np.uint8,
 )

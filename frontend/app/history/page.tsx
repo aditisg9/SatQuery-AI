@@ -43,18 +43,18 @@ export default function HistoryPage() {
                 onClick={() =>
                   router.push(s.mode === "single" ? `/analyze?session=${s.id}` : `/compare?session=${s.id}`)
                 }
-                className="group w-full flex items-center justify-between text-left rounded-lg border border-panel-border bg-panel/50 px-4 py-3 hover:border-signal/40 hover:bg-panel-raised/40 active:scale-[0.99] transition-all cursor-pointer"
+                className="group w-full flex items-center justify-between text-left rounded-lg border border-panel-border bg-panel px-4 py-3 hover:border-primary/40 hover:bg-panel-raised active:scale-[0.99] transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {s.mode === "single" ? (
-                    <ScanSearch className="w-4 h-4 text-signal shrink-0" />
+                    <ScanSearch className="w-4 h-4 text-primary shrink-0" />
                   ) : (
-                    <GitCompareArrows className="w-4 h-4 text-change shrink-0" />
+                    <GitCompareArrows className="w-4 h-4 text-warning shrink-0" />
                   )}
                   <div className="min-w-0">
                     <div className="text-sm text-ink truncate">{s.title}</div>
                     <div className="text-[10px] font-mono-ui text-ink-muted uppercase tracking-wide">
-                      {s.mode === "single" ? "Single image" : "Change detection"}
+                      {s.mode === "single" ? "Single image" : "change detection"}
                     </div>
                   </div>
                 </div>
@@ -64,7 +64,7 @@ export default function HistoryPage() {
                   </span>
                   <button
                     onClick={(e) => handleDelete(e, s.id, s.title)}
-                    className="p-1.5 rounded-md text-ink-muted opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:text-alert hover:bg-alert/10 hover:scale-110 active:scale-90 transition-all"
+                    className="p-1.5 rounded-md text-ink-muted opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:text-error hover:bg-error/10 hover:scale-110 active:scale-90 transition-all"
                     aria-label="Delete session"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

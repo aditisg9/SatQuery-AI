@@ -17,7 +17,7 @@ import numpy as np
 
 from app.services.segmentation_service import CLASS_DEFS, CLASS_KEYS
 
-CHANGE_COLOR = np.array([242, 70, 70], dtype=np.uint8)  # highlight color
+CHANGE_COLOR = np.array([181, 139, 82], dtype=np.uint8)  # highlight color
 
 
 @dataclass

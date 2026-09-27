@@ -1,33 +1,51 @@
 "use client";
 
-import { MapPin, Ruler, Calendar, Globe2, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  MapPin,
+  Ruler,
+  Calendar,
+  Globe2,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import type { ClassStat, GeoMetadata } from "@/lib/types";
 import { formatAreaDual, formatCoord } from "@/lib/format";
 
-export default function GeoStatsCard({ geo, classStats }: { geo: GeoMetadata; classStats: ClassStat[] }) {
-  const totalAreaHectares = classStats.reduce((sum, c) => sum + (c.area_hectares ?? 0), 0);
+export default function GeoStatsCard({
+  geo,
+  classStats,
+}: {
+  geo: GeoMetadata;
+  classStats: ClassStat[];
+}) {
+  const totalAreaHectares = classStats.reduce(
+    (sum, c) => sum + (c.area_hectares ?? 0),
+    0,
+  );
 
   if (!geo.has_geo_metadata) {
     return (
-      <div className="rounded-lg border border-panel-border bg-panel/50 p-4 transition-all duration-200 hover:border-change/40 hover:shadow-glow-change">
+      <div className="rounded-lg border border-panel-border bg-panel p-4 transition-all duration-200 hover:border-warning/40 hover:shadow-sm-warning">
         <div className="flex items-center gap-2 mb-2">
-          <AlertCircle className="w-3.5 h-3.5 text-change" />
-          <div className="font-mono-ui text-xs tracking-wider text-change uppercase">No Georeference</div>
+          <AlertCircle className="w-3.5 h-3.5 text-warning" />
+          <div className="font-mono-ui text-xs tracking-wider text-warning uppercase">
+            No Georeference
+          </div>
         </div>
         <p className="text-xs text-ink-muted leading-relaxed">
-          This image has no embedded CRS/geotransform, so statistics below are pixel-percentage
-          only. Upload a georeferenced GeoTIFF to unlock real-world area, coordinate bounds, and
-          resolution-aware analysis.
+          This image has no embedded CRS/geotransform, so statistics below are
+          pixel-percentage only. Upload a georeferenced GeoTIFF to unlock
+          real-world area, coordinate bounds, and resolution-aware analysis.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border border-signal/30 bg-signal/[0.04] p-4 transition-all duration-200 hover:border-signal/50 hover:shadow-glow">
+    <div className="rounded-lg border border-success/30 bg-success/[0.04] p-4 transition-all duration-200 hover:border-success/50 hover:shadow-sm-success">
       <div className="flex items-center gap-2 mb-3">
-        <CheckCircle2 className="w-3.5 h-3.5 text-signal" />
-        <div className="font-mono-ui text-xs tracking-wider text-signal uppercase">
+        <CheckCircle2 className="w-3.5 h-3.5 text-success" />
+        <div className="font-mono-ui text-xs tracking-wider text-success uppercase">
           Georeferenced Analysis
         </div>
       </div>
@@ -37,10 +55,22 @@ export default function GeoStatsCard({ geo, classStats }: { geo: GeoMetadata; cl
         <GeoField
           icon={Ruler}
           label="Pixel Resolution"
-          value={geo.pixel_resolution_m ? `${geo.pixel_resolution_m.toFixed(2)} m` : "—"}
+          value={
+            geo.pixel_resolution_m
+              ? `${geo.pixel_resolution_m.toFixed(2)} m`
+              : "—"
+          }
         />
-        <GeoField icon={Calendar} label="Acquired" value={geo.acquisition_date || "Unknown"} />
-        <GeoField icon={MapPin} label="Total Analyzed Area" value={formatAreaDual(totalAreaHectares)} />
+        <GeoField
+          icon={Calendar}
+          label="Acquired"
+          value={geo.acquisition_date || "Unknown"}
+        />
+        <GeoField
+          icon={MapPin}
+          label="Total Analyzed Area"
+          value={formatAreaDual(totalAreaHectares)}
+        />
       </div>
 
       <div className="mt-3 pt-3 border-t border-panel-border/70">
@@ -63,12 +93,20 @@ export default function GeoStatsCard({ geo, classStats }: { geo: GeoMetadata; cl
           {classStats
             .filter((c) => c.pixel_percentage > 0)
             .map((c) => (
-              <div key={c.key} className="flex items-center justify-between text-xs">
+              <div
+                key={c.key}
+                className="flex items-center justify-between text-xs"
+              >
                 <span className="flex items-center gap-2 text-ink-muted">
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: c.color }}
+                  />
                   {c.label}
                 </span>
-                <span className="font-mono-ui text-ink">{formatAreaDual(c.area_hectares)}</span>
+                <span className="font-mono-ui text-ink">
+                  {formatAreaDual(c.area_hectares)}
+                </span>
               </div>
             ))}
         </div>

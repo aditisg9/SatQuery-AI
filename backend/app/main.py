@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.deps import get_current_active_user
 
 from app.api import (
     routes_admin,
@@ -9,6 +10,7 @@ from app.api import (
     routes_projects,
     routes_status,
     routes_upload,
+    routes_auth,
 )
 from app.config import get_settings
 from app.database import init_db
@@ -31,13 +33,14 @@ def on_startup():
     init_db()
 
 
-app.include_router(routes_upload.router)
-app.include_router(routes_analyze.router)
+app.include_router(routes_upload.router, dependencies=[Depends(get_current_active_user)])
+app.include_router(routes_analyze.router, dependencies=[Depends(get_current_active_user)])
 app.include_router(routes_status.router)
-app.include_router(routes_projects.router)
+app.include_router(routes_projects.router, dependencies=[Depends(get_current_active_user)])
 app.include_router(routes_assets.router)
-app.include_router(routes_imagery.router)
+app.include_router(routes_imagery.router, dependencies=[Depends(get_current_active_user)])
 app.include_router(routes_admin.router)
+app.include_router(routes_auth.router)
 
 
 @app.get("/")

@@ -19,7 +19,7 @@ export default function Header({ title, subtitle }: { title: string; subtitle?: 
   }, []);
 
   return (
-    <header className="flex items-center justify-between h-16 px-4 md:px-6 border-b border-panel-border bg-panel/40 backdrop-blur-sm gap-3">
+    <header className="flex items-center justify-between h-16 px-4 md:px-6 border-b border-panel-border bg-void/90 backdrop-blur-sm gap-3">
       <div className="flex items-center gap-3 min-w-0">
         <MobileNav />
         <div className="min-w-0">
@@ -35,10 +35,10 @@ export default function Header({ title, subtitle }: { title: string; subtitle?: 
           <button
             onClick={() => router.push("/settings")}
             title="View engine status in Settings"
-            className={`flex items-center gap-2 px-2.5 md:px-3 py-1.5 rounded-full border font-mono-ui text-[11px] tracking-wide transition-all active:scale-95 hover:shadow-glow ${
+            className={`flex items-center gap-2 px-2.5 md:px-3 py-1.5 rounded-full border font-mono-ui text-[11px] tracking-wide transition-all active:scale-95 hover:shadow-sm ${
               status.vlm_backend === "gemini"
-                ? "border-signal/40 text-signal bg-signal/10 hover:border-signal hover:bg-signal/20"
-                : "border-change/40 text-change bg-change/10 hover:border-change hover:bg-change/20 hover:shadow-glow-change"
+                ? "border-primary/40 text-primary bg-primary/10 hover:border-primary hover:bg-primary/20"
+                : "border-warning/40 text-warning bg-warning/10 hover:border-warning hover:bg-warning/20"
             }`}
           >
             {status.vlm_backend === "gemini" ? (

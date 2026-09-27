@@ -33,6 +33,19 @@ class Settings(BaseSettings):
 
     APP_NAME: str = "SatQuery AI"
     APP_VERSION: str = "1.0.0"
+    
+    # Auth
+    JWT_SECRET: str = "CHANGE_THIS_SECRET_KEY_IN_PRODUCTION"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7 # 7 days
+    
+    # Email / SMTP
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM: str = "noreply@satquery.ai"
+    SMTP_FROM_NAME: str = "SatQuery AI"
 
     @property
     def uses_gemini(self) -> bool:

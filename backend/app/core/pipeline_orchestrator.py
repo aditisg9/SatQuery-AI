@@ -282,7 +282,7 @@ def _draw_boxes(base_rgb: np.ndarray, boxes) -> np.ndarray:
     """Cheap in-numpy rectangle drawing (no extra dependency)."""
     out = base_rgb.copy()
     h, w = out.shape[:2]
-    color = np.array([255, 90, 40], dtype=np.uint8)
+    color = np.array([34, 199, 214], dtype=np.uint8)
     thickness = max(1, min(h, w) // 300)
     for b in boxes:
         x, y, bw, bh = b.bbox_norm

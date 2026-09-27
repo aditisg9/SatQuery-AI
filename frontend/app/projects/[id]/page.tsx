@@ -99,24 +99,24 @@ export default function ProjectDetailPage() {
         </button>
 
         {editing ? (
-          <div className="rounded-lg border border-signal/30 bg-signal/[0.04] p-4 mb-6 space-y-3">
+          <div className="rounded-lg border border-primary/30 bg-primary/[0.04] p-4 mb-6 space-y-3">
             <input
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
-              className="w-full bg-panel-raised border border-panel-border rounded-md px-3 py-2 text-sm outline-none focus:border-signal/50"
+              className="w-full bg-panel-raised border border-panel-border rounded-md px-3 py-2 text-sm outline-none focus:border-primary/50"
             />
             <textarea
               value={editDesc}
               onChange={(e) => setEditDesc(e.target.value)}
               rows={2}
               placeholder="Description (optional)"
-              className="w-full bg-panel-raised border border-panel-border rounded-md px-3 py-2 text-sm outline-none focus:border-signal/50 resize-none placeholder:text-ink-muted"
+              className="w-full bg-panel-raised border border-panel-border rounded-md px-3 py-2 text-sm outline-none focus:border-primary/50 resize-none placeholder:text-ink-muted"
             />
             <div className="flex gap-2">
               <button
                 onClick={saveEdit}
                 disabled={saving || !editName.trim()}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-signal text-void text-xs font-mono-ui font-semibold hover:bg-signal/90 active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-white text-xs font-mono-ui font-semibold hover:bg-primary/90 active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-all"
               >
                 <Check className="w-3.5 h-3.5" /> Save
               </button>
@@ -131,8 +131,8 @@ export default function ProjectDetailPage() {
         ) : (
           <div className="flex items-start justify-between gap-4 mb-6">
             <div className="flex items-start gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-lg bg-signal/10 border border-signal/30 flex items-center justify-center shrink-0">
-                <FolderKanban className="w-5 h-5 text-signal" />
+              <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                <FolderKanban className="w-5 h-5 text-primary" />
               </div>
               <div className="min-w-0">
                 <h2 className="font-display text-xl font-semibold text-ink truncate">{project.name}</h2>
@@ -146,13 +146,13 @@ export default function ProjectDetailPage() {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setEditing(true)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-md border border-panel-border text-ink-muted text-xs font-mono-ui hover:text-signal hover:border-signal/40 hover:bg-signal/5 active:scale-95 transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-md border border-panel-border text-ink-muted text-xs font-mono-ui hover:text-primary hover:border-primary/40 hover:bg-primary/5 active:scale-95 transition-all"
               >
                 <Pencil className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Rename</span>
               </button>
               <button
                 onClick={handleDeleteProject}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-md border border-alert/30 text-alert text-xs font-mono-ui hover:bg-alert/10 active:scale-95 transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-md border border-error/30 text-error text-xs font-mono-ui hover:bg-error/10 active:scale-95 transition-all"
               >
                 <Trash2 className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Delete</span>
               </button>
@@ -163,13 +163,13 @@ export default function ProjectDetailPage() {
         <div className="grid sm:grid-cols-2 gap-3 mb-8">
           <button
             onClick={() => router.push(`/analyze?project=${project.id}`)}
-            className="flex items-center gap-2 justify-center rounded-lg border border-panel-border bg-panel/50 py-4 text-sm font-mono-ui text-ink-muted hover:border-signal/40 hover:text-signal hover:shadow-glow active:scale-[0.98] transition-all"
+            className="flex items-center gap-2 justify-center rounded-lg border border-panel-border bg-panel py-4 text-sm font-mono-ui text-ink-muted hover:border-primary/40 hover:text-primary hover:shadow-sm active:scale-[0.98] transition-all"
           >
             <ScanSearch className="w-4 h-4" /> New Single-Image Analysis
           </button>
           <button
             onClick={() => router.push(`/compare?project=${project.id}`)}
-            className="flex items-center gap-2 justify-center rounded-lg border border-panel-border bg-panel/50 py-4 text-sm font-mono-ui text-ink-muted hover:border-change/40 hover:text-change hover:shadow-glow-change active:scale-[0.98] transition-all"
+            className="flex items-center gap-2 justify-center rounded-lg border border-panel-border bg-panel py-4 text-sm font-mono-ui text-ink-muted hover:border-warning/40 hover:text-warning hover:shadow-sm active:scale-[0.98] transition-all"
           >
             <GitCompareArrows className="w-4 h-4" /> New Change Detection
           </button>
@@ -190,13 +190,13 @@ export default function ProjectDetailPage() {
                 onClick={() =>
                   router.push(s.mode === "single" ? `/analyze?session=${s.id}` : `/compare?session=${s.id}`)
                 }
-                className="group w-full flex items-center justify-between text-left rounded-lg border border-panel-border bg-panel/50 px-4 py-3 hover:border-signal/40 hover:bg-panel-raised/40 active:scale-[0.99] transition-all cursor-pointer"
+                className="group w-full flex items-center justify-between text-left rounded-lg border border-panel-border bg-panel px-4 py-3 hover:border-primary/40 hover:bg-panel-raised active:scale-[0.99] transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {s.mode === "single" ? (
-                    <ScanSearch className="w-4 h-4 text-signal shrink-0" />
+                    <ScanSearch className="w-4 h-4 text-primary shrink-0" />
                   ) : (
-                    <GitCompareArrows className="w-4 h-4 text-change shrink-0" />
+                    <GitCompareArrows className="w-4 h-4 text-warning shrink-0" />
                   )}
                   <div className="min-w-0">
                     <div className="text-sm text-ink truncate">{s.title}</div>
@@ -211,7 +211,7 @@ export default function ProjectDetailPage() {
                   </span>
                   <button
                     onClick={(e) => handleDeleteSession(e, s.id, s.title)}
-                    className="p-1.5 rounded-md text-ink-muted opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:text-alert hover:bg-alert/10 hover:scale-110 active:scale-90 transition-all"
+                    className="p-1.5 rounded-md text-ink-muted opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:text-error hover:bg-error/10 hover:scale-110 active:scale-90 transition-all"
                     aria-label="Delete session"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

@@ -11,13 +11,17 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#0B1220",
+  themeColor: "#07111F",
 };
+
+import { Providers } from "./providers";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-grid-surface min-h-screen antialiased font-sans">{children}</body>
+      <body className="bg-grid-surface min-h-screen antialiased font-sans">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

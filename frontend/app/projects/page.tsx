@@ -60,12 +60,12 @@ export default function ProjectsPage() {
         </div>
 
         {showForm && (
-          <div className="rounded-lg border border-signal/30 bg-signal/[0.04] p-4 mb-6 space-y-3">
+          <div className="rounded-lg border border-primary/30 bg-primary/[0.04] p-4 mb-6 space-y-3">
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Project name — e.g. Yamuna Floodplain Watch"
-              className="w-full bg-panel-raised border border-panel-border rounded-md px-3 py-2 text-sm outline-none focus:border-signal/50 placeholder:text-ink-muted"
+              className="w-full bg-panel-raised border border-panel-border rounded-md px-3 py-2 text-sm outline-none focus:border-primary/50 placeholder:text-ink-muted"
               autoFocus
             />
             <textarea
@@ -73,7 +73,7 @@ export default function ProjectsPage() {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional description"
               rows={2}
-              className="w-full bg-panel-raised border border-panel-border rounded-md px-3 py-2 text-sm outline-none focus:border-signal/50 placeholder:text-ink-muted resize-none"
+              className="w-full bg-panel-raised border border-panel-border rounded-md px-3 py-2 text-sm outline-none focus:border-primary/50 placeholder:text-ink-muted resize-none"
             />
             <Button variant="primary" size="sm" onClick={submit} disabled={!name.trim() || saving}>
               {saving ? "Creating…" : "Create Project"}
@@ -84,7 +84,7 @@ export default function ProjectsPage() {
         {loading ? (
           <div className="grid sm:grid-cols-2 gap-3">
             {[0, 1].map((i) => (
-              <div key={i} className="rounded-lg border border-panel-border bg-panel/30 p-4 h-20 animate-pulse" />
+              <div key={i} className="rounded-lg border border-panel-border bg-panel p-4 h-20 animate-pulse" />
             ))}
           </div>
         ) : projects.length === 0 ? (
@@ -101,10 +101,10 @@ export default function ProjectsPage() {
               <button
                 key={p.id}
                 onClick={() => router.push(`/projects/${p.id}`)}
-                className="text-left rounded-lg border border-panel-border bg-panel/50 p-4 hover:border-signal/40 hover:shadow-glow active:scale-[0.98] transition-all"
+                className="text-left rounded-lg border border-panel-border bg-panel p-4 hover:border-primary/40 hover:shadow-sm active:scale-[0.98] transition-all"
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <FolderKanban className="w-4 h-4 text-signal shrink-0" />
+                  <FolderKanban className="w-4 h-4 text-primary shrink-0" />
                   <div className="text-sm text-ink truncate">{p.name}</div>
                 </div>
                 {p.description && (

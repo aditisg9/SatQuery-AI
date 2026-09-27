@@ -34,7 +34,7 @@ export default function UploadPanel({
         setUploading(false);
       }
     },
-    [onUploaded]
+    [onUploaded],
   );
 
   const onDrop = (e: React.DragEvent) => {
@@ -57,10 +57,10 @@ export default function UploadPanel({
         compact ? "p-6" : "p-10 md:p-12"
       } ${
         dragging
-          ? "border-signal bg-signal/5 shadow-glow scale-[1.01]"
+          ? "border-primary bg-primary/5 shadow-sm scale-[1.01]"
           : uploaded
-          ? "border-signal/40 bg-panel/50"
-          : "border-dashed border-panel-border bg-panel/50 hover:border-signal/50 hover:bg-panel-raised/50"
+            ? "border-success/40 bg-panel"
+            : "border-dashed border-panel-border bg-panel hover:border-primary/50 hover:bg-panel-raised"
       }`}
     >
       <input
@@ -76,18 +76,24 @@ export default function UploadPanel({
 
       {uploading ? (
         <>
-          <Loader2 className="w-8 h-8 text-signal animate-spin mb-3" />
-          <p className="text-sm font-mono-ui text-ink-muted">Uploading &amp; extracting metadata…</p>
+          <Loader2 className="w-8 h-8 text-primary animate-spin mb-3" />
+          <p className="text-sm font-mono-ui text-ink-muted">
+            Uploading &amp; extracting metadata…
+          </p>
         </>
       ) : uploaded ? (
         <>
-          <CheckCircle2 className="w-8 h-8 text-signal mb-3" />
+          <CheckCircle2 className="w-8 h-8 text-success mb-3" />
           <p className="text-sm font-mono-ui text-ink">{uploaded.filename}</p>
           <p className="text-xs text-ink-muted mt-1">
             {uploaded.width}×{uploaded.height}px ·{" "}
-            {uploaded.geo.has_geo_metadata ? "Georeferenced" : "No geo metadata"}
+            {uploaded.geo.has_geo_metadata
+              ? "Georeferenced"
+              : "No geo metadata"}
           </p>
-          <p className="text-[11px] text-signal mt-3 font-mono-ui">Click to replace</p>
+          <p className="text-[11px] text-success mt-3 font-mono-ui">
+            Click to replace
+          </p>
         </>
       ) : (
         <>
@@ -97,14 +103,16 @@ export default function UploadPanel({
             <UploadCloud className="w-10 h-10 text-ink-muted mb-3" />
           )}
           <p className="text-sm font-mono-ui text-ink">{label}</p>
-          <p className="text-xs text-ink-muted mt-1">Drag &amp; drop, or click to browse</p>
+          <p className="text-xs text-ink-muted mt-1">
+            Drag &amp; drop, or click to browse
+          </p>
           <p className="text-[11px] text-ink-muted mt-3 font-mono-ui tracking-wide">
             SUPPORTS: JPG · PNG · GeoTIFF
           </p>
         </>
       )}
 
-      {error && <p className="text-xs text-alert mt-3 font-mono-ui">{error}</p>}
+      {error && <p className="text-xs text-error mt-3 font-mono-ui">{error}</p>}
     </div>
   );
 }

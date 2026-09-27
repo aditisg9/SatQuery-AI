@@ -25,12 +25,12 @@ export default function WeatherCard({ lat, lon }: { lat: number; lon: number }) 
   if (failed) return null; // weather is a bonus — never show a broken card for it
   if (!weather) {
     return (
-      <div className="rounded-lg border border-panel-border bg-panel/50 p-4 animate-pulse h-20" />
+      <div className="rounded-lg border border-panel-border bg-panel p-4 animate-pulse h-20" />
     );
   }
 
   return (
-    <div className="rounded-lg border border-panel-border bg-panel/50 p-4 transition-all duration-200 hover:border-signal/40 hover:shadow-glow">
+    <div className="rounded-lg border border-panel-border bg-panel p-4 transition-all duration-200 hover:border-primary/40 hover:shadow-sm">
       <div className="flex items-center gap-2 mb-3">
         <div className="flex items-center gap-1.5 text-[10px] font-mono-ui text-ink-muted uppercase tracking-wider">
           <Cloud className="w-3 h-3" /> Live Weather at This Location
