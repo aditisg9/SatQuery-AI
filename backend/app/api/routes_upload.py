@@ -7,12 +7,18 @@ from app.schemas.image import GeoMetadata, ImageOut
 from app.services.preprocessing import validate_upload
 from app.utils.asset_store import save_asset
 from app.utils.image_utils import basic_metadata, make_thumbnail_bytes, read_geotiff_metadata
+from app.api.deps import get_current_active_user
+from app.models.user import User
 
 router = APIRouter(prefix="/api/images", tags=["images"])
 
 
 @router.post("/upload", response_model=ImageOut)
-async def upload_image(file: UploadFile, db: Session = Depends(get_db)):
+async def upload_image(
+    file: UploadFile, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     content = await file.read()
     filename = file.filename or "upload.png"
     try:
@@ -37,6 +43,7 @@ async def upload_image(file: UploadFile, db: Session = Depends(get_db)):
 
     record = SatelliteImage(
         filename=filename,
+        user_id=current_user.id,
         asset_id=asset_id,
         thumbnail_asset_id=thumb_asset_id,
         content_type=file.content_type,
@@ -60,9 +67,13 @@ async def upload_image(file: UploadFile, db: Session = Depends(get_db)):
 
 
 @router.get("/{image_id}", response_model=ImageOut)
-def get_image(image_id: str, db: Session = Depends(get_db)):
+def get_image(
+    image_id: str, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     record = db.get(SatelliteImage, image_id)
-    if not record:
+    if not record or record.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Image not found")
     return _to_out(record)
 

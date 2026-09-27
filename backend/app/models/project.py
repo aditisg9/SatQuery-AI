@@ -16,6 +16,7 @@ class Project(Base):
     __tablename__ = "projects"
 
     id = Column(String, primary_key=True, default=gen_id)
+    user_id = Column(String, nullable=True)
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

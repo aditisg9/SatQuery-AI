@@ -16,6 +16,7 @@ class AnalysisSession(Base):
     __tablename__ = "analysis_sessions"
 
     id = Column(String, primary_key=True, default=gen_id)
+    user_id = Column(String, nullable=True)
     title = Column(String, default="Untitled analysis")
     mode = Column(String, default="single")  # "single" | "compare"
 

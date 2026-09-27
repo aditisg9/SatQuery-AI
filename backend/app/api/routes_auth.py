@@ -15,8 +15,31 @@ from app.api.deps import get_current_user
 from app.utils.email import send_verification_email, send_password_reset_email
 from app.config import get_settings
 
+import uuid
+
 settings = get_settings()
 router = APIRouter(prefix="/api/auth", tags=["auth"])
+
+@router.post("/guest", response_model=Token)
+def create_guest(db: Session = Depends(get_db)):
+    guest_id = str(uuid.uuid4())
+    guest_email = f"guest-{guest_id[:8]}@satquery.ai"
+    user = User(
+        name="Guest User",
+        email=guest_email,
+        password_hash=get_password_hash(guest_id),
+        role=RoleEnum.USER,
+        email_verified=True
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    access_token = create_access_token(
+        subject=user.id, 
+        expires_delta=timedelta(hours=1)
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/register", response_model=UserOut)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):

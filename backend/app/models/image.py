@@ -14,6 +14,7 @@ class SatelliteImage(Base):
     __tablename__ = "satellite_images"
 
     id = Column(String, primary_key=True, default=gen_id)
+    user_id = Column(String, nullable=True)
     filename = Column(String, nullable=False)
 
     # References into the `assets` table (binary data lives there, not on

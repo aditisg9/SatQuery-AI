@@ -16,12 +16,35 @@ import {
   Database,
   Cpu,
   BrainCircuit,
-  MapPinned
+  MapPinned,
+  Loader2
 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { api } from "@/lib/api";
 
 export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
+  const { login, user } = useAuth();
+
+  const handleTryForFree = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (user) {
+      window.location.href = "/dashboard";
+      return;
+    }
+    try {
+      setIsGuestLoading(true);
+      const res = await api.createGuestSession();
+      await login(res.access_token);
+    } catch (err) {
+      console.error("Guest login failed", err);
+      alert("Failed to create guest session");
+    } finally {
+      setIsGuestLoading(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,12 +87,13 @@ export default function LandingPage() {
             <Link href="/dashboard" className="text-[13px] font-medium text-[#59636E] hover:text-[#182438] transition-colors">
               Sign in
             </Link>
-            <Link
-              href="/dashboard"
-              className="px-4 py-2 bg-[#182438] text-white rounded-md text-[13px] font-medium hover:bg-[#243451] active:scale-[0.98] transition-all shadow-sm"
+            <button
+              onClick={handleTryForFree}
+              disabled={isGuestLoading}
+              className="px-4 py-2 bg-[#182438] text-white rounded-md text-[13px] font-medium hover:bg-[#243451] active:scale-[0.98] transition-all shadow-sm flex items-center justify-center min-w-[120px]"
             >
-              Try SatQuery
-            </Link>
+              {isGuestLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Try for Free"}
+            </button>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -108,12 +132,13 @@ export default function LandingPage() {
             <a href="#capabilities" onClick={() => setMobileMenuOpen(false)}>Capabilities</a>
             <a href="#technology" onClick={() => setMobileMenuOpen(false)}>Technology</a>
             <div className="pt-6 border-t border-[#D9D5CC]">
-              <Link
-                href="/dashboard"
+              <button
+                onClick={handleTryForFree}
+                disabled={isGuestLoading}
                 className="flex items-center justify-center w-full py-3 bg-[#182438] text-white rounded-md transition-colors"
               >
-                Try SatQuery
-              </Link>
+                {isGuestLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Try for Free"}
+              </button>
             </div>
           </div>
         </div>
@@ -133,12 +158,13 @@ export default function LandingPage() {
               Ask questions about satellite imagery in plain language and get grounded answers powered by computer vision and geospatial analysis.
             </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-4">
-              <Link
-                href="/dashboard"
-                className="px-6 py-3.5 bg-[#315FA8] text-white rounded-md text-[13px] font-medium hover:bg-[#3F70BC] active:scale-[0.98] transition-all shadow-sm w-full sm:w-auto text-center"
+              <button
+                onClick={handleTryForFree}
+                disabled={isGuestLoading}
+                className="px-6 py-3.5 bg-[#315FA8] text-white rounded-md text-[13px] font-medium hover:bg-[#3F70BC] active:scale-[0.98] transition-all shadow-sm w-full sm:w-auto text-center flex items-center justify-center min-w-[160px]"
               >
-                Try SatQuery
-              </Link>
+                {isGuestLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Try for Free"}
+              </button>
               <a
                 href="#how-it-works"
                 className="px-6 py-3.5 bg-white border border-[#D9D5CC] text-[#172033] rounded-md text-[13px] font-medium hover:bg-[#F5F3EE] active:scale-[0.98] transition-all w-full sm:w-auto text-center"
@@ -399,12 +425,13 @@ export default function LandingPage() {
             Upload an image, ask a question, and explore what the data can reveal.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/dashboard"
-              className="px-8 py-4 bg-[#182438] text-white rounded-md text-sm font-medium hover:bg-[#243451] active:scale-[0.98] transition-all shadow-sm w-full sm:w-auto"
+            <button
+              onClick={handleTryForFree}
+              disabled={isGuestLoading}
+              className="px-8 py-4 bg-[#182438] text-white rounded-md text-sm font-medium hover:bg-[#243451] active:scale-[0.98] transition-all shadow-sm w-full sm:w-auto flex items-center justify-center min-w-[160px]"
             >
-              Try SatQuery
-            </Link>
+              {isGuestLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Try for Free"}
+            </button>
             <Link
               href="/dashboard"
               className="px-8 py-4 bg-white border border-[#D9D5CC] text-[#182438] rounded-md text-sm font-medium hover:bg-[#F5F3EE] active:scale-[0.98] transition-all w-full sm:w-auto"

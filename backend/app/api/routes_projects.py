@@ -10,13 +10,23 @@ from app.models.session import AnalysisSession
 from app.schemas.analysis import SessionOut
 from app.schemas.project import ProjectCreate, ProjectOut, ProjectUpdate
 from app.utils.time_utils import utc_iso
+from app.api.deps import get_current_active_user
+from app.models.user import User
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
 
 
 @router.post("", response_model=ProjectOut)
-def create_project(payload: ProjectCreate, db: Session = Depends(get_db)):
-    project = Project(name=payload.name.strip(), description=payload.description)
+def create_project(
+    payload: ProjectCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    project = Project(
+        name=payload.name.strip(), 
+        description=payload.description,
+        user_id=current_user.id
+    )
     db.add(project)
     db.commit()
     db.refresh(project)
@@ -24,8 +34,11 @@ def create_project(payload: ProjectCreate, db: Session = Depends(get_db)):
 
 
 @router.get("", response_model=list[ProjectOut])
-def list_projects(db: Session = Depends(get_db)):
-    projects = db.query(Project).order_by(desc(Project.updated_at)).all()
+def list_projects(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    projects = db.query(Project).filter(Project.user_id == current_user.id).order_by(desc(Project.updated_at)).all()
     out = []
     for p in projects:
         count = db.query(AnalysisSession).filter(AnalysisSession.project_id == p.id).count()
@@ -34,18 +47,27 @@ def list_projects(db: Session = Depends(get_db)):
 
 
 @router.get("/{project_id}", response_model=ProjectOut)
-def get_project(project_id: str, db: Session = Depends(get_db)):
+def get_project(
+    project_id: str, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     project = db.get(Project, project_id)
-    if not project:
+    if not project or project.user_id != current_user.id:
         raise HTTPException(404, "Project not found")
     count = db.query(AnalysisSession).filter(AnalysisSession.project_id == project.id).count()
     return _project_out(project, count)
 
 
 @router.patch("/{project_id}", response_model=ProjectOut)
-def update_project(project_id: str, payload: ProjectUpdate, db: Session = Depends(get_db)):
+def update_project(
+    project_id: str, 
+    payload: ProjectUpdate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     project = db.get(Project, project_id)
-    if not project:
+    if not project or project.user_id != current_user.id:
         raise HTTPException(404, "Project not found")
     if payload.name is not None:
         project.name = payload.name.strip()
@@ -59,9 +81,13 @@ def update_project(project_id: str, payload: ProjectUpdate, db: Session = Depend
 
 
 @router.delete("/{project_id}")
-def delete_project(project_id: str, db: Session = Depends(get_db)):
+def delete_project(
+    project_id: str, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     project = db.get(Project, project_id)
-    if not project:
+    if not project or project.user_id != current_user.id:
         raise HTTPException(404, "Project not found")
     # Unlink sessions rather than deleting their history
     db.query(AnalysisSession).filter(AnalysisSession.project_id == project_id).update(
@@ -73,9 +99,13 @@ def delete_project(project_id: str, db: Session = Depends(get_db)):
 
 
 @router.get("/{project_id}/sessions", response_model=list[SessionOut])
-def project_sessions(project_id: str, db: Session = Depends(get_db)):
+def project_sessions(
+    project_id: str, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     project = db.get(Project, project_id)
-    if not project:
+    if not project or project.user_id != current_user.id:
         raise HTTPException(404, "Project not found")
     sessions = (
         db.query(AnalysisSession)

@@ -49,14 +49,12 @@ export default function Sidebar() {
         {NAV.map(({ href, label, icon: Icon }) => {
           if (href === "/admin" && user?.role !== "ADMIN") return null;
           
-          // Rewrite /admin to /dashboard/admin since we moved it
-          const actualHref = href === "/admin" ? "/dashboard/admin" : href;
-          const active = href === "/dashboard" ? pathname === "/dashboard" : pathname?.startsWith(actualHref);
+          const active = href === "/dashboard" ? pathname === "/dashboard" : pathname?.startsWith(href);
           
           return (
             <Link
               key={href}
-              href={actualHref}
+              href={href}
               className={`relative flex items-center gap-3 px-3 py-2 rounded-md text-sm font-mono-ui transition-all active:scale-[0.98] group ${
                 active
                   ? "bg-sidebar-active-bg text-sidebar-ink shadow-sm"

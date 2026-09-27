@@ -10,6 +10,8 @@ from app.services import imagery_fetch_service as svc
 from app.services import weather_service
 from app.utils.asset_store import save_asset
 from app.utils.image_utils import make_thumbnail_bytes
+from app.api.deps import get_current_active_user
+from app.models.user import User
 
 router = APIRouter(prefix="/api/imagery", tags=["imagery"])
 logger = logging.getLogger("satquery.imagery")
@@ -56,7 +58,11 @@ def get_weather(lat: float, lon: float):
 
 
 @router.post("/fetch", response_model=ImageOut)
-def fetch_imagery(payload: FetchImageryRequest, db: Session = Depends(get_db)):
+def fetch_imagery(
+    payload: FetchImageryRequest, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     zoom = payload.zoom if payload.zoom else svc.DEFAULT_ZOOM
     zoom = max(11, min(18, zoom))  # keep within a sane, always-fetchable range
     result = svc.fetch_satellite_image(payload.lat, payload.lon, zoom=zoom)
@@ -75,6 +81,7 @@ def fetch_imagery(payload: FetchImageryRequest, db: Session = Depends(get_db)):
 
     record = SatelliteImage(
         filename=filename,
+        user_id=current_user.id,
         asset_id=asset_id,
         thumbnail_asset_id=thumb_asset_id,
         content_type="image/png",

@@ -55,12 +55,11 @@ export default function MobileNav() {
               {NAV.map(({ href, label, icon: Icon }) => {
                 if (href === "/admin" && user?.role !== "ADMIN") return null;
                 
-                const actualHref = href === "/admin" ? "/dashboard/admin" : href;
-                const active = href === "/dashboard" ? pathname === "/dashboard" : pathname?.startsWith(actualHref);
+                const active = href === "/dashboard" ? pathname === "/dashboard" : pathname?.startsWith(href);
                 return (
                   <Link
                     key={href}
-                    href={actualHref}
+                    href={href}
                     onClick={() => setOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-mono-ui transition-all active:scale-[0.98] ${
                       active

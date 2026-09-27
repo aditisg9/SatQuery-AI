@@ -80,6 +80,9 @@ export const api = {
       body: payload,
     }).then((r) => handle<{ access_token: string; token_type: string }>(r)),
 
+  createGuestSession: () =>
+    fetch(`${BASE}/api/auth/guest`, { method: "POST" }).then((r) => handle<{ access_token: string; token_type: string }>(r)),
+
   me: () => authFetch(`${BASE}/api/auth/me`).then((r) => handle<any>(r)),
 
   forgotPassword: (email: string) =>

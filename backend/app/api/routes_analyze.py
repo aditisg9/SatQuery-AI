@@ -14,12 +14,18 @@ from app.schemas.analysis import AnalysisResult, QuestionIn, SessionCreate, Sess
 from app.services.geospatial_service import GeoContext
 from app.utils.asset_store import get_asset
 from app.utils.time_utils import utc_iso
+from app.api.deps import get_current_active_user
+from app.models.user import User
 
 router = APIRouter(prefix="/api", tags=["analysis"])
 
 
 @router.post("/sessions", response_model=SessionOut)
-def create_session(payload: SessionCreate, db: Session = Depends(get_db)):
+def create_session(
+    payload: SessionCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     if payload.mode == "single" and not payload.image_id:
         raise HTTPException(400, "image_id is required for mode='single'")
     if payload.mode == "compare" and not (payload.before_image_id and payload.after_image_id):
@@ -33,6 +39,7 @@ def create_session(payload: SessionCreate, db: Session = Depends(get_db)):
         before_image_id=payload.before_image_id,
         after_image_id=payload.after_image_id,
         project_id=payload.project_id,
+        user_id=current_user.id
     )
     db.add(session)
     db.commit()
@@ -41,13 +48,30 @@ def create_session(payload: SessionCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/sessions", response_model=list[SessionOut])
-def list_sessions(db: Session = Depends(get_db)):
-    sessions = db.query(AnalysisSession).order_by(desc(AnalysisSession.created_at)).limit(50).all()
+def list_sessions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    sessions = (
+        db.query(AnalysisSession)
+        .filter(AnalysisSession.user_id == current_user.id)
+        .order_by(desc(AnalysisSession.created_at))
+        .limit(50)
+        .all()
+    )
     return [_session_out(s) for s in sessions]
 
 
 @router.get("/sessions/{session_id}/history")
-def session_history(session_id: str, db: Session = Depends(get_db)):
+def session_history(
+    session_id: str, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    session = db.get(AnalysisSession, session_id)
+    if not session or session.user_id != current_user.id:
+        raise HTTPException(404, "Session not found")
+
     records = (
         db.query(AnalysisRecord)
         .filter(AnalysisRecord.session_id == session_id)
@@ -68,17 +92,25 @@ def session_history(session_id: str, db: Session = Depends(get_db)):
 
 
 @router.get("/sessions/{session_id}", response_model=SessionOut)
-def get_session(session_id: str, db: Session = Depends(get_db)):
+def get_session(
+    session_id: str, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     session = db.get(AnalysisSession, session_id)
-    if not session:
+    if not session or session.user_id != current_user.id:
         raise HTTPException(404, "Session not found")
     return _session_out(session)
 
 
 @router.delete("/sessions/{session_id}")
-def delete_session(session_id: str, db: Session = Depends(get_db)):
+def delete_session(
+    session_id: str, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     session = db.get(AnalysisSession, session_id)
-    if not session:
+    if not session or session.user_id != current_user.id:
         raise HTTPException(404, "Session not found")
     db.query(AnalysisRecord).filter(AnalysisRecord.session_id == session_id).delete()
     db.delete(session)
@@ -87,9 +119,13 @@ def delete_session(session_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/analyze", response_model=AnalysisResult)
-def analyze(payload: QuestionIn, db: Session = Depends(get_db)):
+def analyze(
+    payload: QuestionIn, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
     session = db.get(AnalysisSession, payload.session_id)
-    if not session:
+    if not session or session.user_id != current_user.id:
         raise HTTPException(404, "Session not found")
 
     orchestrator = get_orchestrator()
