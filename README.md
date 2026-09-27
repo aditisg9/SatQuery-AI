@@ -21,9 +21,9 @@ graph TD
     Client([Web Client / Browser]) -->|HTTP / JSON| Frontend
 
     subgraph "Docker Compose Network"
-        Frontend[Next.js Frontend\nReact & Tailwind]:::frontend
-        Backend[FastAPI Backend\nPython CV Pipeline]:::backend
-        DB[(PostgreSQL + PostGIS\nDatabase)]:::db
+        Frontend[Next.js Frontend<br>React & Tailwind]:::frontend
+        Backend[FastAPI Backend<br>Python CV Pipeline]:::backend
+        DB[(PostgreSQL + PostGIS<br>Database)]:::db
         
         Frontend -->|REST API calls| Backend
         Backend -->|SQL / ORM| DB
@@ -92,21 +92,18 @@ docker exec satquery-ai-backend-1 python create_admin.py --name "Admin User" --e
 ## 📂 Project Structure
 
 ```mermaid
-gitGraph
-   commit id: "SatQuery AI"
-   branch frontend
-   checkout frontend
-   commit id: "/app (Pages & Layout)"
-   commit id: "/components (UI & Charts)"
-   commit id: "/lib (API Interceptors)"
-   checkout main
-   branch backend
-   checkout backend
-   commit id: "/api (FastAPI Routes)"
-   commit id: "/services (CV & LLM Logic)"
-   commit id: "/models (SQLAlchemy)"
-   checkout main
-   commit id: "docker-compose.yml"
+graph LR
+    Root[SatQuery AI] --> Frontend[frontend/]
+    Root --> Backend[backend/]
+    Root --> Config[docker-compose.yml]
+    
+    Frontend --> F1[app/ - Pages & Layout]
+    Frontend --> F2[components/ - UI & Charts]
+    Frontend --> F3[lib/ - API Client]
+    
+    Backend --> B1[app/api/ - FastAPI Routes]
+    Backend --> B2[app/services/ - CV & LLM Logic]
+    Backend --> B3[app/models/ - SQLAlchemy]
 ```
 
 ### Key Directories
